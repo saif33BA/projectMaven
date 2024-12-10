@@ -1,32 +1,44 @@
 pipeline {
-   agent any
-   tools {
-       jdk 'jdk19'
-   }
-   environment {
-       JAVA_HOME = 'C:\Program Files\Java\jdk-19'
-   }
-   stages {
-       stage ('Compile Stage') {
+    agent any
+    
+    tools{ 
+        jdk 'JDK19' 
+       
+
+    }
+    
+    environment { 
+        JAVA_HOME = 'C:\\Program Files\\Java\\jdk-19'
+    }
+    
+    stages {
+      stage ('clone repo') {
+            steps {
+               git branch: 'main', url: 'https://github.com/saif33BA/projectMaven.git'
+            }
+        }
+        stage ('Compile Stage') {
+            steps {
+                withMaven(maven : 'maven') {
+                    bat 'mvn clean compile'
+                }
+            }
+        }
+        
+        stage ('Testing Stage') {
+            steps {
+                withMaven(maven : 'maven') {
+                    bat 'mvn test'
+                } 
+            }
+        }
+        
+        stage ('Install Stage') {
            steps {
-               withMaven(maven : 'apache-maven-3.9.9') {
-                   bat 'mvn clean compile'
-               }
-           }
-       }
-       stage ('Testing Stage') {
-           steps {
-               withMaven(maven : 'apache-maven-3.9.9') {
-                   bat 'mvn test'
-               }
-           }
-       }
-       stage ('Install Stage') {
-           steps {
-               withMaven(maven : 'apache-maven-3.9.9') {
-                   bat 'mvn install'
-               }
-           }
-       }
-   }
+                withMaven(maven : 'maven') {
+                    bat 'mvn install'
+                } 
+            } 
+        }
+    }
 }
